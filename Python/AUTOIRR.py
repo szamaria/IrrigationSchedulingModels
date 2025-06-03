@@ -4,7 +4,7 @@ AUTOIRR ISM
 This code replicates the SWAT AUTOIRR function and defines an end of season/harvest date that bypasses the "end of season" bug, where SWAT will continue to irrigate according to the AUTOIRR algorithm even after crops are harvested.
 The code requires all SWAT .mgt files to be located in the python directory folder. The user simply needs to copy all .mgt files from the working SWAT project folder into the directory. Here, we have named this folder "mgt_files"
 
-This code can be customized for specific SWAT projects. Users must define:
+This code can be customized for specific SWAT projects. Based on knowledge of the region or BMP guidelines, users must define:
 1. Crops to be included in study and associated planting and harvesting dates, irrigation interval, irrigation depth per application, and partitioning of irrigation source from surface water and groundwater
 2. SWAT project start and end dates
 3. In a separate csv, all scheduled management operations *other than irrigation* per crop, formatted as defined in the SWAT input/output documentation
@@ -44,7 +44,7 @@ output_hru.columns = ["LULC","HRU","GIS","SUB","MGT","MON","DAY","YEAR", "AREAkm
 
 hrus = pd.DataFrame(output_hru)
 
-#Crops and associated parameters to be defined by user. Users can include as many crops as applicable. Crop names should be consistent with SWAT LULC.
+#Crops and associated parameters to be defined by user. Users can include as many crops as applicable. Crop names should be consistent with SWAT LULC codes.
 crops = {
     "CORN": {
         "start mon": 5,  #initial planting month
@@ -85,12 +85,11 @@ def generate_string(file, month, day, ops_no, fert_id = "", irr_sc="", wtrstrs="
     string += str(ops_no).rjust(12)
     string += str(fert_id).rjust(5) #WSTRSID for AUTORIRR
     string += str(irr_sc).rjust(4)
-    string += str('{:.5f}'.format(float(wtrstrs)) if wtrstrs != '' else '').rjust(16) #This is now wtstrs (was irr before)
+    string += str('{:.5f}'.format(float(wtrstrs)) if wtrstrs != '' else '').rjust(16) 
     string += str('{:.2f}'.format(float(irr_efm)) if irr_efm != '' else '').rjust(7)
-    string += str(format(float(irr), '.5f') if irr != '' else '').rjust(12)   # change bio_init to irr string; this was code before:  += str('{:.2f}'.format(float(bio_init)) if bio_init != '' else '').rjust(5) #irramt goes here
+    string += str(format(float(irr), '.5f') if irr != '' else '').rjust(12)  
     string += str('{:.2f}'.format(float(hi_targ)) if hi_targ != '' else '').rjust(5)
     string += str('{:.2f}'.format(float(bio_targ)) if bio_targ != '' else '').rjust(7)
-    # string += str('{:.2f}'.format(float(cnop)) if cnop != '' else '').rjust(6)
     string += str(sub).rjust(18)
     file.write(string + '\n')
 
@@ -112,7 +111,7 @@ copy_tree(directory, tmp_directory) #Copies .mgt files to temporary directory.
 mgt_files = [f for f in listdir(tmp_directory) if isfile(join(tmp_directory, f))] # reads each .mgt file in temporary directory
 
 #Each crop will also have additional scheduled management operations that are not irrigation (ex., fertilizer applications, tillage, pesticde applications...). This additional schedule must be created as a csv. 
-# The data is then read here and later integrated with the ISM schedule.
+# The data is then read here and later integrated with the ISM schedule by date.
 corn = pd.read_csv("corn.csv", keep_default_na=False)
 soyb = pd.read_csv("SOYB.csv", keep_default_na=False)
 tobc = pd.read_csv("TOBC.csv", keep_default_na=False)
@@ -124,9 +123,9 @@ for mgt_file in mgt_files:
         data = file.read() #reads file
         index = data.index("Operation Schedule") + 50
         file.seek(index)
-        hru = int(re.search(r"(?<=HRU\:)\d+", data)[0]) #regex; looking for HRU: and digits after, in data file. returns a list of every match in file. This searches for HRU number in each mgt file. [0] means we just want the first result
+        hru = int(re.search(r"(?<=HRU\:)\d+", data)[0]) #regex; looking for HRU: and digits after, in data file. returns a list of every match in file. This searches for HRU number in each mgt file.
         subbasin = int(re.search(r"(?<=Subbasin\:)\d+", data)[0]) #same as above but for subbasin
-        crop_key = re.search(r"(?<=Luse\:)[A-Z]+", data)[0] #same as above but for luse
+        crop_key = re.search(r"(?<=Luse\:)[A-Z]+", data)[0] #same as above but for land use
 
 # The code below runs the AUTOIRR ISM algorithm. The code runs through the daily time series as set by the user and writes operation lines to the .mgt files corresponding with crops of interest. 
 # This code bypasses the "end of year" bug by manually forcing irrigation operations to end at the respective crop's end(harvest) date.
@@ -134,7 +133,7 @@ for mgt_file in mgt_files:
         if crop_key in crops.keys(): # only runs if crop is in crops list (tobc, corn, soyb)
             crop = crops[crop_key]
             extra_ops = globals()[crop_key.lower()]
-            dates = pd.date_range(start = "[YYYY=MM-DD]", end = "[YYYY-MM-DD]") #INPUT YOUR SWAT PROJECT START AND END DATES HERE
+            dates = pd.date_range(start = "YYYY-MM-DD", end = "YYYY-MM-DD") #INPUT YOUR SWAT PROJECT START AND END DATES HERE
             day_count = 0
             year_break = 2007 #Input your SWAT spin-up start year here
             for date in dates:
@@ -156,12 +155,15 @@ for mgt_file in mgt_files:
                 
                 #First irrigation application:
                 if year >= "insert start year here" and date == start_date:
-                     # file, month, day, ops_no, fert_id = "", irr_sc="", wtrstrs="", irr_efm="", irr="", hi_targ="", bio_targ="", sub=""
+                    #This code generates the irrigation management operation line to be appended to the .mgt file in the correct format. Note that here we have two strings:
+                    #The first string has irrigation source (IRR_SC) set to 3 (sourced from shallow aquifer). The second string has irrigation source set to 1 (main channel)
+                    #This is because we set each irrigation application to be sourced and partitioned from both the aquifer and the channel.
+                    #Users can delete the extra string if they are only using one source, or add more if they are using more.
                     generate_string(file, month, day, "10", "2", "3", "35.32", "0.75", crop["gw"], "0.00", "", subbasin)  # User to define their own AUTOIRR parameters here
                     generate_string(file, month, day, "10", "2", "1", "35.32", "0.75", crop["sw"], "0.00", "", subbasin)  
                 else:
                     continue
-                
+                #This code ends the calendar year and tells SWAT to start the next year of management ops.
                 if day == 31 and month == 12:               
                     generate_year_delim(file)        
                     print(file.name)
