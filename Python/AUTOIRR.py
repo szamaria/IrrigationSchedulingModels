@@ -7,7 +7,7 @@ The code requires all SWAT .mgt files to be located in the python directory fold
 This code can be customized for specific SWAT projects. Based on knowledge of the region or BMP guidelines, users must define:
 1. Crops to be included in study and associated planting and harvesting dates, irrigation interval, irrigation depth per application, and partitioning of irrigation source from surface water and groundwater
 2. SWAT project start and end dates
-3. In a separate csv, all scheduled management operations *other than irrigation* per crop, formatted as defined in the SWAT input/output documentation
+3. In a separate csv, all scheduled management operations *other than irrigation* per crop, formatted as defined in the SWAT input/output documentation. An example csv with correct formatting is located in IrrigationSchedulingModels/extra_mgt_operations/example_crop_input.csv.
 4. AUTOIRR function parameters as outlined in the SWAT input/output documentation, such as AUTO_WSTRS (water stress threshold that triggers irrigation) and IRR_SCA (auto irrigation source code)
 
 First, irrigation parameters (ex., start date, irrigation interval, irrigation depth per application) per crop are set. Then, extra management operations that are not irrigation per crop from the user-created csvs are read. The code creates a temporary directory of .mgt files
