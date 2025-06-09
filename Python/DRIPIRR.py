@@ -9,7 +9,7 @@ Transpiration is estimated from simulated potential evapotranspiration using an 
 Given daily transpiration > 0, irrigation is applied daily.
 Irrigation is sourced from groundwater and surface water according to the established partitioning. Users can change irrigation source and partitioning as needed.
  
-The code requires all SWAT .mgt files to be located in the python directory folder. The user simply needs to copy all .mgt files from the working SWAT project folder into the directory. Here, we have named this folder "mgt_files"
+The code requires all SWAT .mgt files and the output.hru file to be located in the python directory folder. The user simply needs to copy all .mgt files from the working SWAT project folder into the directory. Here, we have named this folder "mgt_files"
 
 This code can be customized for specific SWAT projects. Based on knowledge of the region or BMP guidelines, users must define:
 1. Crops to be included in study and associated planting and harvesting dates, irrigation interval, irrigation depth per application, and partitioning of irrigation source from surface water and groundwater
