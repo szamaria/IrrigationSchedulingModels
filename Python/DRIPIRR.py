@@ -19,7 +19,7 @@ An example csv with correct formatting is located in IrrigationSchedulingModels/
 4. Irrigation parameters as outlined in the SWAT input/output documentation, such as IRR_SCA (irrigation source code)
 
 First, irrigation parameters (ex., start date, irrigation interval, irrigation depth per application) per crop are set. Then, extra management operations that are not irrigation per crop from the user-created csvs are read. The code creates a temporary directory of .mgt files
-to be appended with scheduled management operations as defined by the aforementioned csv and the AUTOIRR algorithm. The ISM algorithm is then run, and scheduled management operations are appended to applicable .mgt files chronologically, line-by-line. The algorithm stops running 
+to be appended with scheduled management operations as defined by the aforementioned csv and the DRIPIRR algorithm. The ISM algorithm is then run, and scheduled management operations are appended to applicable .mgt files chronologically, line-by-line. The algorithm stops running 
 on the user-defined end date. 
 
 To force SWAT with the irrigation schedule, the new .mgt files need to be copied back into the working SWAT project folder.
