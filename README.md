@@ -15,6 +15,7 @@ Contact: sophia.zamaria@mail.utoronto.ca
 
 Relevant references:
 Zamaria, S. A. & Arhonditsis, G. B. (2025). A framework for evaluating irrigation impact on water balance and crop yield under different moisture conditions. [Submitted]; Hydrological Processes
+Arnold, J. G., Kiniry, J. R., Srinivasan, R., Williams, J. R., Haney, E. B., & Neitsch, S. L. (2012). (rep.). Soil and Water Assessment Tool Input/Output Documentation. Retrieved 2025, from https://swat.tamu.edu/media/69296/swat-io-documentation-2012.pdf. 
 Ontario Federation of Agriculture. (2004). Best Mangement Practices: Irrigation Management. Ontario Ministry of Agriculture and Food.
 
 
