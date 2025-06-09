@@ -9,7 +9,7 @@ actual evapotranspiration (AET) from SWAT. The CWR is then divided by the number
 daily irrigation amount. This irrigation amount is continuously applied every day during the growing season, regardless of 
 soil moisture content or precipitation occurrences.
 
-Irrigation is sourced from groundwater and surface water according to the established partitioning from Zamaria et al., 2025. Users can change irrigation source and partitioning as needed.
+Irrigation is sourced from groundwater and surface water according to the established partitioning from Zamaria and Arhonditsis (2025). Users can change irrigation source and partitioning as needed.
  
 The code requires all SWAT .mgt files and the output.hru file to be located in the python directory folder. The user simply needs to copy all .mgt files from the working SWAT project folder into the directory. Here, we have named this folder "mgt_files"
 
