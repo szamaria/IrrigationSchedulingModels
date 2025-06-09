@@ -16,9 +16,18 @@ on the user-defined end date.
 
 To force SWAT with the irrigation schedule, the new .mgt files need to be copied back into the working SWAT project folder.
 
-"""
-# Import libraries
+DEFS:
+.mgt: management input files
+sw: surface water
+gw: groundwater
+id: suggested nominal irrigation depth (mm) (OMAFRA, 2004)
+root: typical crop rooting depth (mm)(OMAFRA, 2004)
+interval: suggested irrigation interval (OMAFRA, 2004)
+CWR: crop water requirement (mm) caluclated as sum of simulated actual evapotranspiration of crop/HRU/year
+ """
 
+
+# Import libraries
 import os
 import pandas as pd
 import numpy as np
